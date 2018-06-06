@@ -14,6 +14,12 @@
             background-color: darkgreen;
             color: #fff;
         }
+
+        .error-valid{
+            color: red;
+            padding-top: 8px;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -23,20 +29,20 @@
         <h1 class="mb-4">Table data for AJAX</h1>
         <div class="row">
             <div class="col-lg-4">
-                <form method="post" action="adddata.php">
+                <form name="adddata_form" method="post" action="adddata.php">
                     <div class="form-group">
                         <div class="col">
-                            <input type="text" id="name" class="form-control" placeholder="Product name">
+                            <input type="text" id="name" name="name" class="form-control" placeholder="Product name">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col">
-                            <input type="text" id="price" class="form-control" placeholder="Price">
+                            <input type="text" id="price" name="price" class="form-control" placeholder="Price">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col">
-                            <input type="number" id="qty" class="form-control" placeholder="Qty">
+                            <input type="number" id="qty" name="qty" class="form-control" placeholder="Qty">
                         </div>
                     </div>
                     <div class="form-group">
@@ -69,6 +75,7 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
 
     <!--Initial jquery function-->
     <script>
@@ -91,31 +98,55 @@
 
 
             // รับค่าจากฟอร์ม
-            $('input[type=submit]').click(function(){
-                //alert('ok');
+            // validate form
+            $("form[name=adddata_form]").validate({
 
-                var product_name = $('#name').val();
-                var product_price = $('#price').val();
-                var product_qty = $('#qty').val();
-
-                // ตรวจว่ากรอกข้อมูลครบหรือไม่
-                if(product_name != "" 
-                && product_price != "" 
-                && product_qty != "")
-                {
-                    //alert(product_name+product_price+product_qty);
+                rules:{
+                    name:{
+                        required:true
+                    },
+                    price:{
+                        required:true,
+                        number: true
+                    },
+                    qty:{
+                        required:true
+                    }
+                },
+                messages:{
+                    name:{
+                        required:"กรุณากรอกชื่อสินค้าก่อน"
+                    },
+                    price:{
+                        required:"กรุณากรอกราคาสินค้าก่อน",
+                        number: "ราคาต้องเป็นตัวเลขเท่านั้น"
+                    },
+                    qty:{
+                        required:"ป้อนจำนวนสินค้าก่อน"
+                    }
+                },
+                errorClass:"error-valid",
+                errorPlacement:function(error,element){
+                    error.appendTo(element.parent());
+                },
+                submitHandler:function(form){
+                    // AJAX
+                    var product_name = $('#name').val();
+                    var product_price = $('#price').val();
+                    var product_qty = $('#qty').val();
+                        
                     // นับจำนวนแถว
                     var row = $('table tbody tr').length;
                     var trstring = "<tr>"+
-                                "<td>"+(row+1)+"</td>"+
-                                "<td>"+product_name+"</td>"+
-                                "<td>"+product_price+"</td>"+
-                                "<td>"+product_qty+"</td>"+
-                                "<td>"+
-                                "    <a href='#' id='btnedit' class='btn btn-warning'>Edit</a>"+
-                                "    <a href='#' id='btndel' class='btn btn-danger'>Delete</a>"+
-                                "</td>"+
-                                "</tr>";
+                                    "<td>"+(row+1)+"</td>"+
+                                    "<td>"+product_name+"</td>"+
+                                    "<td>"+product_price+"</td>"+
+                                    "<td>"+product_qty+"</td>"+
+                                    "<td>"+
+                                    "    <a href='#' id='btnedit' class='btn btn-warning'>Edit</a>"+
+                                    "    <a href='#' id='btndel' class='btn btn-danger'>Delete</a>"+
+                                    "</td>"+
+                                    "</tr>";
                     $('table tbody').append(trstring);
 
                     // clear form
@@ -123,10 +154,10 @@
 
                     // focus input name
                     $('#name').focus();
-                }
+
+                } //submitHandler
                 
-                return false;
-            }); // event click
+            }); // validate form
 
 
             // event delete data from table
