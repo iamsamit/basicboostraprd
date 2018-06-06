@@ -8,7 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        .active {
+            background-color: darkgreen;
+            color: #fff;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,25 +23,25 @@
         <h1 class="mb-4">Table data for AJAX</h1>
         <div class="row">
             <div class="col-lg-4">
-                <form>
+                <form method="post" action="adddata.php">
                     <div class="form-group">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Product name">
+                            <input type="text" id="name" class="form-control" placeholder="Product name">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col">
-                            <input type="text" class="form-control" placeholder="Price">
+                            <input type="text" id="price" class="form-control" placeholder="Price">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col">
-                            <input type="number" class="form-control" placeholder="Qty">
+                            <input type="number" id="qty" class="form-control" placeholder="Qty">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col">
-                            <input type="button" class="btn btn-success btn-block" value="Submit">
+                            <input type="submit" class="btn btn-success btn-block" value="Submit">
                         </div>
                     </div>
                 </form>
@@ -52,16 +58,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Lenovo ideapad</td>
-                            <td>29,500.00</td>
-                            <td>15</td>
-                            <td>
-                                <a href="#" class="btn btn-warning">Edit</a>
-                                <a href="#" class="btn btn-danger">Delete</a>
-                            </td>
-                        </tr>
+                        
                     </tbody>
                 </table>
             </div>
@@ -70,9 +67,106 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <!--Initial jquery function-->
+    <script>
+        $(function () {
+            // Selector
+
+            $('h1')
+                .css('color', 'white')
+                .css('background-color', 'brown');
+
+            // Mouse Over
+            $('table tbody tr').mouseover(function () {
+                $(this).addClass('active');
+            });
+
+            // Mouse Out
+            $('table tbody tr').mouseout(function () {
+                $(this).removeClass('active');
+            });
+
+
+            // รับค่าจากฟอร์ม
+            $('input[type=submit]').click(function(){
+                //alert('ok');
+
+                var product_name = $('#name').val();
+                var product_price = $('#price').val();
+                var product_qty = $('#qty').val();
+
+                // ตรวจว่ากรอกข้อมูลครบหรือไม่
+                if(product_name != "" 
+                && product_price != "" 
+                && product_qty != "")
+                {
+                    //alert(product_name+product_price+product_qty);
+                    // นับจำนวนแถว
+                    var row = $('table tbody tr').length;
+                    var trstring = "<tr>"+
+                                "<td>"+(row+1)+"</td>"+
+                                "<td>"+product_name+"</td>"+
+                                "<td>"+product_price+"</td>"+
+                                "<td>"+product_qty+"</td>"+
+                                "<td>"+
+                                "    <a href='#' id='btnedit' class='btn btn-warning'>Edit</a>"+
+                                "    <a href='#' id='btndel' class='btn btn-danger'>Delete</a>"+
+                                "</td>"+
+                                "</tr>";
+                    $('table tbody').append(trstring);
+
+                    // clear form
+                    $('form').trigger('reset');
+
+                    // focus input name
+                    $('#name').focus();
+                }
+                
+                return false;
+            }); // event click
+
+
+            // event delete data from table
+            $('body').on('click','a#btndel',function(){
+                // deleate row
+                // $(this).parent().parent().remove();
+                $(this).closest('tr').remove();
+            });
+
+            // event edit data from table
+            $('body').on('click','a#btnedit',function(){
+                // call modal
+                $('#modal-edit').modal('show');
+            });
+
+
+        });
+    </script>
+      
+      <!-- Modal -->
+      <div class="modal fade" id="modal-edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">Edit Product</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h1>Edit Product</h1>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    
 </body>
 
 </html>
