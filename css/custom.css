@@ -1,0 +1,22 @@
+.navbar-brand img
+{
+    height: 50px;
+}
+
+.bg-light
+{
+    background-color: #11a98d !important;
+}
+
+.navbar-light .navbar-nav .nav-link
+{
+    color:#fff;
+}
+
+footer
+{
+    padding: 40px;
+    margin-top: 40px;
+    background-color: #343535;
+    color: #fff;
+}
